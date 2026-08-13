@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lapinha da Serra — Rateio da Casa</title>
+  <meta name="description" content="Planejamento e rateio do Airbnb em Lapinha da Serra" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f3f6f4;
+      --bg-elev: #ffffff;
+      --ink: #15201b;
+      --ink-soft: #4a5c54;
+      --muted: #6d7f76;
+      --line: #d7e0db;
+      --pine: #1f6b4a;
+      --pine-soft: #e6f3ec;
+      --sky: #e8f1f4;
+      --accent: #0d7a8c;
+      --warn: #b45309;
+      --warn-soft: #fff4e5;
+      --danger: #b42318;
+      --ok: #027a48;
+      --soft-c: #a16207;
+      --uncertain-c: #475467;
+      --invite-c: #b54708;
+      --shadow: 0 10px 30px rgba(21, 32, 27, 0.06);
+      --radius: 20px;
+      --font-display: "Instrument Serif", Georgia, serif;
+      --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background:
+        radial-gradient(ellipse 90% 50% at 0% -10%, #dceee6 0%, transparent 55%),
+        radial-gradient(ellipse 70% 40% at 100% 0%, #d7e8ef 0%, transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 1.5rem));
+      margin: 0 auto;
+      padding: 1.25rem 0 3rem;
+    }
+
+    /* —— Top bar —— */
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      animation: in 0.5s ease both;
+    }
+
+    .brand-kicker {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .brand h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 6vw, 3.4rem);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .brand h1 em {
+      font-style: italic;
+      color: var(--pine);
+    }
+
+    .airbnb-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.05rem;
+      border-radius: 999px;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .airbnb-link:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+
+    .airbnb-link svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* —— KPI strip —— */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      animation: in 0.55s ease both 0.05s;
+    }
+
+    @media (max-width: 860px) {
+      .kpis { grid-template-columns: 1fr 1fr; }
+    }
+
+    .kpi {
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 1.1rem 1.15rem 1.05rem;
+      box-shadow: var(--shadow);
+      min-height: 118px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .kpi.highlight {
+      background: linear-gradient(145deg, #1f6b4a 0%, #0f4f3a 100%);
+      border-color: transparent;
+      color: #f4fbf7;
+    }
+
+    .kpi .label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .kpi.highlight .label { color: rgba(244, 251, 247, 0.75); }
+
+    .kpi .value {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4.5vw, 2.75rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-top: 0.55rem;
+    }
+
+    .kpi .hint {
+      margin-top: 0.45rem;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      font-weight: 500;
+    }
+
+    .kpi.highlight .hint { color: rgba(244, 251, 247, 0.8); }
+
+    /* —— Tabs —— */
+    .tabs {
+      display: flex;
+      gap: 0.35rem;
+      padding: 0.35rem;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      animation: in 0.6s ease both 0.08s;
+      backdrop-filter: blur(8px);
+    }
+
+    .tab {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--ink-soft);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 0.75rem 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tab:hover { background: rgba(31, 107, 74, 0.08); color: var(--ink); }
+
+    .tab.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .panel {
+      display: none;
+      animation: in 0.35s ease both;
+    }
+
+    .panel.active { display: block; }
+
+    .card {
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.25rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .section-desc {
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      margin-bottom: 1.15rem;
+      max-width: 42rem;
+    }
+
+    .tip {
+      padding: 1rem 1.1rem;
+      border-radius: 14px;
+      background: var(--sky);
+      border: 1px solid #c5d8e0;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .tip strong { color: var(--ink); }
+
+    /* —— Overview —— */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 0.85rem;
+    }
+
+    @media (max-width: 800px) {
+      .overview-grid { grid-template-columns: 1fr; }
+    }
+
+    .big-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .split-box {
+      background: var(--pine-soft);
+      border-radius: 16px;
+      padding: 1.1rem 1rem;
+    }
+
+    .split-box .t {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--pine);
+    }
+
+    .split-box .n {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      line-height: 1;
+      margin-top: 0.35rem;
+      color: var(--ink);
+    }
+
+    .copy-box {
+      background: #f7faf8;
+      border-radius: 14px;
+      padding: 1rem;
+      border: 1px dashed var(--line);
+      font-size: 0.9rem;
+      white-space: pre-line;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .warn-banner {
+      margin-top: 0.85rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .warn-banner.show { display: block; }
+
+    /* —— Prices —— */
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 720px) {
+      .price-grid { grid-template-columns: 1fr; }
+    }
+
+    .price-card {
+      appearance: none;
+      text-align: left;
+      border: 2px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 1.2rem;
+      cursor: pointer;
+      font-family: var(--font-body);
+      color: var(--ink);
+      transition: border-color 0.15s, transform 0.15s, background 0.15s;
+    }
+
+    .price-card:hover { transform: translateY(-2px); border-color: #a8c4b6; }
+
+    .price-card.active {
+      border-color: var(--pine);
+      background: var(--pine-soft);
+    }
+
+    .price-card .cap {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .price-card .amount {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      line-height: 1;
+      margin: 0.45rem 0 0.35rem;
+    }
+
+    .price-card .per { font-size: 0.88rem; color: var(--ink-soft); font-weight: 500; }
+
+    .price-card .tag {
+      display: inline-block;
+      margin-top: 0.7rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--pine);
+    }
+
+    .rec-row {
+      margin-top: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.95rem 1.05rem;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .rec-row strong { font-size: 1.05rem; }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 650;
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn:hover { background: var(--pine-soft); border-color: #a8c4b6; }
+
+    .btn-primary {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .btn-primary:hover { background: #24362e; border-color: #24362e; }
+
+    /* —— People —— */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 0.3rem;
+    }
+
+    .dot.confirmed { background: var(--ok); }
+    .dot.soft { background: var(--soft-c); }
+    .dot.uncertain { background: var(--uncertain-c); }
+    .dot.invite { background: var(--invite-c); }
+
+    .people-list { display: grid; gap: 0.5rem; }
+
+    .person {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.85rem 0.95rem;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    .person.off { opacity: 0.48; background: #f7f9f8; }
+
+    .toggle-go {
+      width: 46px;
+      height: 28px;
+      border-radius: 999px;
+      border: none;
+      background: #d5ddd8;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle-go.on { background: var(--pine); }
+
+    .toggle-go::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+    }
+
+    .toggle-go.on::after { transform: translateX(18px); }
+
+    .person-name {
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.45rem;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .badge.confirmed { background: #dcfae6; color: var(--ok); }
+    .badge.soft { background: #fef7c3; color: var(--soft-c); }
+    .badge.uncertain { background: #eef2f6; color: var(--uncertain-c); }
+    .badge.invite { background: #ffead5; color: var(--invite-c); }
+
+    .person-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+      font-weight: 500;
+    }
+
+    .certainty-select {
+      appearance: none;
+      background: #f3f6f4;
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 0.35rem;
+    }
+
+    .days {
+      display: flex;
+      background: #f0f4f1;
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .days button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.4rem 0.7rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .days button.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .person-cost {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      text-align: right;
+      min-width: 5.8rem;
+      line-height: 1;
+    }
+
+    .person-cost small {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    .name-edit {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed var(--line);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      width: 100%;
+      max-width: 11rem;
+      outline: none;
+    }
+
+    .remove-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 0.15rem;
+    }
+
+    .remove-btn:hover { color: var(--danger); }
+
+    @media (max-width: 640px) {
+      .person {
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+          "toggle info"
+          "days cost";
+      }
+      .toggle-go { grid-area: toggle; }
+      .person-info { grid-area: info; }
+      .days { grid-area: days; justify-self: start; }
+      .person-cost { grid-area: cost; }
+    }
+
+    /* —— Scenarios —— */
+    .scenarios {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 860px) {
+      .scenarios { grid-template-columns: 1fr; }
+    }
+
+    .scenario {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 1.2rem;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scenario::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+    }
+
+    .scenario.base::before { background: var(--pine); }
+    .scenario.opt::before { background: var(--accent); }
+    .scenario.pes::before { background: var(--uncertain-c); }
+
+    .scenario .label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .scenario h3 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      margin: 0.25rem 0 0.15rem;
+    }
+
+    .scenario .count {
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .scenario .price-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.55rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .scenario .price-line span {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .scenario .price-line strong {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      font-weight: 400;
+    }
+
+    .scenario .house-line {
+      margin-top: 0.75rem;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      font-weight: 500;
+    }
+
+    .scenario .house-line b { color: var(--ink); }
+
+    .footnote {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    @keyframes in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* —— Birthday —— */
+    .bday {
+      position: relative;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 22px;
+      background:
+        linear-gradient(120deg, #fff7ed 0%, #fdf2f8 45%, #eef9f3 100%);
+      border: 2px solid #f9c9d4;
+      box-shadow: 0 12px 28px rgba(190, 80, 110, 0.12);
+      overflow: hidden;
+      animation: in 0.5s ease both 0.03s;
+    }
+
+    @media (max-width: 620px) {
+      .bday {
+        grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+      }
+    }
+
+    .bday-photo {
+      width: 140px;
+      height: 140px;
+      border-radius: 18px;
+      object-fit: cover;
+      object-position: center top;
+      border: 3px solid #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      transform: rotate(-3deg);
+    }
+
+    .bday-emoji-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      font-size: 1.35rem;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+
+    @media (max-width: 620px) {
+      .bday-emoji-row { justify-content: center; }
+    }
+
+    .bday h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.55rem, 3.5vw, 2.1rem);
+      line-height: 1.1;
+      color: #9d174d;
+      margin-bottom: 0.25rem;
+    }
+
+    .bday p {
+      color: #6b3a4a;
+      font-size: 0.95rem;
+      font-weight: 560;
+      max-width: 36rem;
+    }
+
+    .bday-float {
+      position: absolute;
+      font-size: 1.4rem;
+      pointer-events: none;
+      animation: floaty 3.2s ease-in-out infinite;
+      opacity: 0.9;
+    }
+
+    .bday-float.a { top: 0.5rem; right: 1rem; animation-delay: 0s; }
+    .bday-float.b { bottom: 0.55rem; right: 3.2rem; animation-delay: 0.6s; font-size: 1.15rem; }
+    .bday-float.c { top: 1.1rem; right: 4.5rem; animation-delay: 1.1s; font-size: 1.05rem; }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0) rotate(-6deg); }
+      50% { transform: translateY(-7px) rotate(6deg); }
+    }
+
+    .bday-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .bday-shot {
+      margin: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .bday-shot img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .bday-shot figcaption {
+      padding: 0.75rem 0.9rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+
+    .bday-banner-mini {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      font-size: 1.5rem;
+      margin: 0.75rem 0 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="brand-kicker">Viagem · aniversário · rateio</div>
+        <h1>Lapinha <em>da Serra</em></h1>
+      </div>
+      <a
+        class="airbnb-link"
+        href="https://www.airbnb.com.br/rooms/36117331?unique_share_id=161d98c2-7e3a-4b9c-88ea-3bdcd5db6c7a&viralityEntryPoint=1&s=76"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8.5 2 6 4.8 6 8.2c0 4.4 4.4 9.3 5.4 10.4a.8.8 0 0 0 1.2 0C13.6 17.5 18 12.6 18 8.2 18 4.8 15.5 2 12 2zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>
+        Ver casa no Airbnb
+      </a>
+    </header>
+
+    <section class="bday" aria-label="Feliz aniversário">
+      <img
+        class="bday-photo"
+        src="aniversariante-1.png"
+        alt="A aniversariante em modo carnaval, com Heineken e cone no teto do Clearblue"
+      />
+      <div>
+        <div class="bday-emoji-row" aria-hidden="true">
+          <span>🎂</span><span>🎉</span><span>🥳</span><span>🎈</span><span>✨</span><span>💐</span><span>🥂</span>
+        </div>
+        <h2>Feliz aniversário! 💖</h2>
+        <p>
+          A razão dessa viagem é celebrar ela — com amigos, serra e (claro) umas fotos lendárias.
+          <button type="button" class="btn" id="btn-goto-bday" style="margin-left:0.35rem;margin-top:0.45rem">Ver mural 🎂</button>
+        </p>
+      </div>
+      <span class="bday-float a" aria-hidden="true">🎂</span>
+      <span class="bday-float b" aria-hidden="true">🎊</span>
+      <span class="bday-float c" aria-hidden="true">💝</span>
+    </section>
+
+    <section class="kpis" aria-label="Números principais">
+      <div class="kpi highlight">
+        <div class="label">Total da casa</div>
+        <div class="value" id="kpi-total">—</div>
+        <div class="hint" id="kpi-cap">Capacidade —</div>
+      </div>
+      <div class="kpi">
+        <div class="label">1 diária</div>
+        <div class="value" id="kpi-1">—</div>
+        <div class="hint">por pessoa · agora</div>
+      </div>
+      <div class="kpi">
+        <div class="label">2 diárias</div>
+        <div class="value" id="kpi-2">—</div>
+        <div class="hint">por pessoa · agora</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Pessoas ativas</div>
+        <div class="value" id="kpi-people">—</div>
+        <div class="hint" id="kpi-nights">— diárias somadas</div>
+      </div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Seções">
+      <button type="button" class="tab active" role="tab" aria-selected="true" data-tab="resumo">Resumo</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="aniversario">🎂 Aniversário</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="pessoas">Quem vai</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="cenarios">Cenários</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="casa">Preço da casa</button>
+    </nav>
+
+    <!-- RESUMO -->
+    <div class="panel active" id="panel-resumo" role="tabpanel">
+      <div class="card">
+        <h2 class="section-title">Visão rápida</h2>
+        <p class="section-desc">Os valores grandes acima mudam conforme você marca quem vai na aba “Quem vai”.</p>
+
+        <div class="tip">
+          <strong>Reservar menor e subir depois?</strong>
+          Em geral é mais seguro reservar para o número com mais certeza e pedir ao anfitrião para aumentar depois — se houver vaga e ele aceitar. Baixar depois quase sempre depende da política de alteração e pode não devolver a diferença.
+          <a href="https://www.airbnb.com.br/rooms/36117331?unique_share_id=161d98c2-7e3a-4b9c-88ea-3bdcd5db6c7a&viralityEntryPoint=1&s=76" target="_blank" rel="noopener noreferrer">Abrir anúncio</a>
+        </div>
+
+        <div class="overview-grid">
+          <div>
+            <div class="big-split">
+              <div class="split-box">
+                <div class="t">Paga 1 dia</div>
+                <div class="n" id="ov-1">—</div>
+              </div>
+              <div class="split-box">
+                <div class="t">Paga 2 dias</div>
+                <div class="n" id="ov-2">—</div>
+              </div>
+            </div>
+            <div class="warn-banner" id="overflow-warn">Há mais gente ativa do que a capacidade da casa — suba a capacidade ou desligue alguém.</div>
+            <div class="rec-row" style="margin-top:0.85rem">
+              <div>
+                <strong id="rec-text">Ideal sugerido: —</strong>
+                <div style="font-size:0.88rem;color:var(--ink-soft);margin-top:0.2rem" id="rec-sub">—</div>
+              </div>
+              <button type="button" class="btn" id="btn-goto-casa">Ajustar capacidade</button>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.55rem">Texto pra colar no grupo</h3>
+            <div class="copy-box" id="band-copy">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANIVERSÁRIO -->
+    <div class="panel" id="panel-aniversario" role="tabpanel">
+      <div class="card">
+        <div class="bday-banner-mini" aria-hidden="true">🎂 🎉 🥳 🎈 🎁 ✨ 💐 🥂 💖 🎊</div>
+        <h2 class="section-title">Mural da aniversariante</h2>
+        <p class="section-desc">
+          A viagem existe por causa do aniversário dela. Aqui ficam as fotos engraçadas (e as que ainda vão chegar).
+        </p>
+        <div class="bday-gallery">
+          <figure class="bday-shot">
+            <img
+              src="aniversariante-1.png"
+              alt="Aniversariante no carnaval ao lado do carro Clearblue com cone no teto"
+            />
+            <figcaption>🎂 Modo festa + cone + Clearblue: combo lendário.</figcaption>
+          </figure>
+        </div>
+        <p class="footnote" style="margin-top:1rem">
+          Manda mais fotos engraçadas dela que eu encaixo aqui no mural 🎈
+        </p>
+      </div>
+    </div>
+
+    <!-- PESSOAS -->
+    <div class="panel" id="panel-pessoas" role="tabpanel">
+      <div class="card">
+        <h2 class="section-title">Quem vai</h2>
+        <p class="section-desc">Liga/desliga, escolhe 1 ou 2 diárias e o nível de certeza. O rateio no topo atualiza na hora.</p>
+        <div class="toolbar">
+          <div class="legend">
+            <span><i class="dot confirmed"></i>Confirmado</span>
+            <span><i class="dot soft"></i>Pode dar pra trás</span>
+            <span><i class="dot uncertain"></i>Em dúvida</span>
+            <span><i class="dot invite"></i>Convite</span>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-add">+ Convidar alguém</button>
+        </div>
+        <div class="people-list" id="people-list"></div>
+      </div>
+    </div>
+
+    <!-- CENÁRIOS -->
+    <div class="panel" id="panel-cenarios" role="tabpanel">
+      <div class="card">
+        <h2 class="section-title">Banda de preços</h2>
+        <p class="section-desc">Três leituras pra ninguém inventar que ficou mais caro do que o previsto.</p>
+        <div class="scenarios" id="scenarios"></div>
+        <p class="footnote">Rateio proporcional às diárias. Preços: 9 · R$ 1.662 · 10 · R$ 1.756 · 11 · R$ 1.850.</p>
+      </div>
+    </div>
+
+    <!-- CASA -->
+    <div class="panel" id="panel-casa" role="tabpanel">
+      <div class="card">
+        <h2 class="section-title">Preço da casa</h2>
+        <p class="section-desc">Toque para fixar a capacidade da reserva. A sugestão automática usa quem está confirmado + margem.</p>
+        <div class="price-grid" id="price-grid"></div>
+        <div class="rec-row" id="recommend-banner"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const HOUSE_PRICES = { 9: 1662, 10: 1756, 11: 1850 };
+    const AIRBNB_URL =
+      "https://www.airbnb.com.br/rooms/36117331?unique_share_id=161d98c2-7e3a-4b9c-88ea-3bdcd5db6c7a&viralityEntryPoint=1&s=76";
+
+    const CERTAINTY = {
+      confirmed: { label: "Confirmado", weight: 1 },
+      soft: { label: "Pode dar pra trás", weight: 0.55 },
+      uncertain: { label: "Em dúvida", weight: 0.25 },
+      invite: { label: "Convite", weight: 0.15 },
+    };
+
+    let selectedCapacity = null;
+
+    let people = [
+      { id: "anna", name: "Anna", days: 2, going: true, certainty: "confirmed", removable: false },
+      { id: "joao", name: "João", days: 2, going: true, certainty: "confirmed", removable: false },
+      { id: "andre", name: "André", days: 2, going: true, certainty: "confirmed", removable: false },
+      { id: "dominique", name: "Dominique", days: 2, going: true, certainty: "confirmed", removable: false },
+      { id: "lais", name: "Laís", days: 2, going: true, certainty: "confirmed", removable: false },
+      { id: "luan", name: "Luan", days: 2, going: true, certainty: "confirmed", removable: false },
+      { id: "patricia", name: "Patrícia", days: 1, going: true, certainty: "confirmed", removable: false },
+      { id: "gui", name: "GUI", days: 1, going: true, certainty: "confirmed", removable: false },
+      { id: "anab", name: "Ana B", days: 1, going: true, certainty: "uncertain", removable: false },
+      { id: "pedro", name: "Pedro", days: 1, going: true, certainty: "uncertain", removable: false },
+      { id: "yuri", name: "Yuri", days: 1, going: true, certainty: "confirmed", removable: false },
+      { id: "conv1", name: "Convidado 1", days: 1, going: false, certainty: "invite", removable: true },
+      { id: "conv2", name: "Convidado 2", days: 1, going: false, certainty: "invite", removable: true },
+      { id: "conv3", name: "Convidado 3", days: 1, going: false, certainty: "invite", removable: true },
+    ];
+
+    const money = (n) =>
+      n == null || Number.isNaN(n)
+        ? "—"
+        : n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+    const activePeople = () => people.filter((p) => p.going);
+    const bedNights = (list) => list.reduce((s, p) => s + p.days, 0);
+
+    function nearestCapacity(count) {
+      const caps = Object.keys(HOUSE_PRICES).map(Number).sort((a, b) => a - b);
+      if (count <= caps[0]) return caps[0];
+      for (const c of caps) if (c >= count) return c;
+      return caps[caps.length - 1];
+    }
+
+    function recommendedCapacity() {
+      const confirmed = people.filter((p) => p.going && p.certainty === "confirmed").length;
+      const soft = people.filter((p) => p.going && p.certainty === "soft").length;
+      return nearestCapacity(Math.max(confirmed + soft, confirmed));
+    }
+
+    function currentCapacity() {
+      return selectedCapacity ?? recommendedCapacity();
+    }
+
+    function splitCost(list, housePrice) {
+      const nights = bedNights(list);
+      if (!nights || housePrice == null) return { perDayUnit: null, byPerson: new Map() };
+      const perDayUnit = housePrice / nights;
+      const byPerson = new Map();
+      list.forEach((p) => byPerson.set(p.id, Math.round(perDayUnit * p.days)));
+      return { perDayUnit, byPerson };
+    }
+
+    function scenarioFilter(mode) {
+      if (mode === "base") {
+        return people.filter(
+          (p) => p.going && (p.certainty === "confirmed" || p.certainty === "soft")
+        );
+      }
+      if (mode === "opt") {
+        const going = people.filter((p) => p.going);
+        const invitesOn = people.filter((p) => p.certainty === "invite" && p.going);
+        let merged = [...going];
+        if (invitesOn.length === 0) {
+          people
+            .filter((p) => p.certainty === "invite")
+            .slice(0, 3)
+            .forEach((inv) => {
+              if (!merged.find((m) => m.id === inv.id)) merged.push({ ...inv, going: true });
+            });
+        }
+        people
+          .filter((p) => p.certainty === "uncertain" && !p.going)
+          .forEach((u) => merged.push({ ...u, going: true }));
+        return merged;
+      }
+      return people.filter((p) => p.going && p.certainty === "confirmed");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str).replace(/'/g, "&#39;");
+    }
+
+    function switchTab(id) {
+      document.querySelectorAll(".tab").forEach((t) => {
+        const on = t.dataset.tab === id;
+        t.classList.toggle("active", on);
+        t.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      document.querySelectorAll(".panel").forEach((p) => {
+        p.classList.toggle("active", p.id === "panel-" + id);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+    });
+
+    document.getElementById("btn-goto-casa").addEventListener("click", () => switchTab("casa"));
+    document.getElementById("btn-goto-bday").addEventListener("click", () => switchTab("aniversario"));
+
+    document.getElementById("btn-add").addEventListener("click", () => {
+      const n = people.filter((p) => p.certainty === "invite").length + 1;
+      people.push({
+        id: "conv-" + Date.now(),
+        name: "Convidado " + n,
+        days: 1,
+        going: true,
+        certainty: "invite",
+        removable: true,
+      });
+      refresh();
+    });
+
+    function renderKpis() {
+      const capacity = currentCapacity();
+      const housePrice = HOUSE_PRICES[capacity];
+      const active = activePeople();
+      const nights = bedNights(active);
+      const { perDayUnit } = splitCost(active, housePrice);
+      const one = perDayUnit != null ? Math.round(perDayUnit) : null;
+      const two = perDayUnit != null ? Math.round(perDayUnit * 2) : null;
+
+      document.getElementById("kpi-total").textContent = money(housePrice);
+      document.getElementById("kpi-cap").textContent = `Casa para ${capacity} pessoas`;
+      document.getElementById("kpi-1").textContent = money(one);
+      document.getElementById("kpi-2").textContent = money(two);
+      document.getElementById("kpi-people").textContent = String(active.length);
+      document.getElementById("kpi-nights").textContent = `${nights} diárias somadas`;
+
+      document.getElementById("ov-1").textContent = money(one);
+      document.getElementById("ov-2").textContent = money(two);
+
+      const warn = document.getElementById("overflow-warn");
+      warn.classList.toggle("show", active.length > capacity);
+
+      const auto = recommendedCapacity();
+      document.getElementById("rec-text").textContent = `Ideal sugerido: casa para ${auto}`;
+      document.getElementById("rec-sub").textContent =
+        selectedCapacity != null && selectedCapacity !== auto
+          ? `Você fixou casa ${capacity}. Sugestão automática seria ${auto}.`
+          : "Com base em confirmados + margem de quem pode desistir.";
+    }
+
+    function renderBandCopy() {
+      const base = scenarioFilter("base");
+      const opt = scenarioFilter("opt");
+      const pes = scenarioFilter("pes");
+      const baseCap = nearestCapacity(base.length);
+      const optCap = nearestCapacity(Math.min(opt.length, 11));
+      const pesCap = nearestCapacity(pes.length);
+      const baseSplit = splitCost(base, HOUSE_PRICES[baseCap]);
+      const optSplit = splitCost(opt.length > 11 ? opt.slice(0, 11) : opt, HOUSE_PRICES[optCap]);
+      const pesSplit = splitCost(pes, HOUSE_PRICES[pesCap]);
+
+      const t = `Casa para ${baseCap} — ${money(HOUSE_PRICES[baseCap])}
+Cenário A (base) ${base.length} pessoas
+  1 dia ${money(Math.round(baseSplit.perDayUnit || 0))} · 2 dias ${money(Math.round((baseSplit.perDayUnit || 0) * 2))}
+Cenário B (otimista) ${opt.length} pessoas
+  1 dia ${opt.length > 11 ? "a confirmar" : money(Math.round(optSplit.perDayUnit || 0))} · 2 dias ${opt.length > 11 ? "a confirmar" : money(Math.round((optSplit.perDayUnit || 0) * 2))}
+Cenário C (pessimista) ${pes.length} pessoas
+  1 dia ${money(Math.round(pesSplit.perDayUnit || 0))} · 2 dias ${money(Math.round((pesSplit.perDayUnit || 0) * 2))}
+Anúncio: ${AIRBNB_URL}`;
+
+      document.getElementById("band-copy").textContent = t;
+    }
+
+    function renderPeople() {
+      const capacity = currentCapacity();
+      const housePrice = HOUSE_PRICES[capacity];
+      const active = activePeople();
+      const { byPerson } = splitCost(active, housePrice);
+      const list = document.getElementById("people-list");
+
+      list.innerHTML = people
+        .map((p) => {
+          const cost = p.going ? byPerson.get(p.id) : null;
+          return `
+            <div class="person ${p.going ? "" : "off"}" data-id="${p.id}">
+              <button type="button" class="toggle-go ${p.going ? "on" : ""}" data-action="toggle" aria-label="Alternar presença"></button>
+              <div class="person-info">
+                <div class="person-name">
+                  ${
+                    p.removable
+                      ? `<input class="name-edit" data-action="rename" value="${escapeAttr(p.name)}" />`
+                      : escapeHtml(p.name)
+                  }
+                  <span class="badge ${p.certainty}">${CERTAINTY[p.certainty].label}</span>
+                  ${
+                    p.removable
+                      ? `<button type="button" class="remove-btn" data-action="remove" title="Remover">✕</button>`
+                      : ""
+                  }
+                </div>
+                <div class="person-sub">${p.days} ${p.days === 1 ? "diária" : "diárias"}</div>
+                <select class="certainty-select" data-action="certainty">
+                  ${Object.entries(CERTAINTY)
+                    .map(
+                      ([k, v]) =>
+                        `<option value="${k}" ${p.certainty === k ? "selected" : ""}>${v.label}</option>`
+                    )
+                    .join("")}
+                </select>
+              </div>
+              <div class="days">
+                <button type="button" data-action="days" data-days="1" class="${p.days === 1 ? "active" : ""}">1 dia</button>
+                <button type="button" data-action="days" data-days="2" class="${p.days === 2 ? "active" : ""}">2 dias</button>
+              </div>
+              <div class="person-cost">
+                ${p.going ? money(cost) : "—"}
+                <small>${p.going ? "sua parte" : "fora"}</small>
+              </div>
+            </div>`;
+        })
+        .join("");
+
+      list.querySelectorAll(".person").forEach((row) => {
+        const id = row.dataset.id;
+        const person = people.find((p) => p.id === id);
+
+        row.querySelector('[data-action="toggle"]').addEventListener("click", () => {
+          person.going = !person.going;
+          refresh();
+        });
+
+        row.querySelectorAll('[data-action="days"]').forEach((btn) => {
+          btn.addEventListener("click", () => {
+            person.days = Number(btn.dataset.days);
+            refresh();
+          });
+        });
+
+        row.querySelector('[data-action="certainty"]').addEventListener("change", (e) => {
+          person.certainty = e.target.value;
+          refresh();
+        });
+
+        const rename = row.querySelector('[data-action="rename"]');
+        if (rename) {
+          rename.addEventListener("change", (e) => {
+            person.name = e.target.value.trim() || person.name;
+            refresh();
+          });
+        }
+
+        const remove = row.querySelector('[data-action="remove"]');
+        if (remove) {
+          remove.addEventListener("click", () => {
+            people = people.filter((p) => p.id !== id);
+            refresh();
+          });
+        }
+      });
+    }
+
+    function renderScenarios() {
+      const modes = [
+        { key: "base", className: "base", title: "Cenário A · Base", blurb: "Confirmados + margem razoável" },
+        { key: "opt", className: "opt", title: "Cenário B · Otimista", blurb: "Inclui dúvidas e até 3 convites" },
+        { key: "pes", className: "pes", title: "Cenário C · Pessimista", blurb: "Só quem está firme" },
+      ];
+
+      document.getElementById("scenarios").innerHTML = modes
+        .map((m) => {
+          const list = scenarioFilter(m.key);
+          const count = list.length;
+          const cap = nearestCapacity(count);
+          const over = count > 11;
+          const price = over ? null : HOUSE_PRICES[cap];
+          const { perDayUnit } = splitCost(list, price);
+          const one = perDayUnit != null ? Math.round(perDayUnit) : null;
+          const two = perDayUnit != null ? Math.round(perDayUnit * 2) : null;
+
+          return `
+            <div class="scenario ${m.className}">
+              <div class="label">${m.title}</div>
+              <h3>${count} pessoas</h3>
+              <p class="count">${m.blurb}</p>
+              <div class="price-line"><span>1 diária</span><strong>${over ? "—" : money(one)}</strong></div>
+              <div class="price-line"><span>2 diárias</span><strong>${over ? "—" : money(two)}</strong></div>
+              <div class="house-line">
+                ${
+                  over
+                    ? "Acima de 11 — confiram outro valor com o anfitrião."
+                    : `Casa para <b>${cap}</b> · total <b>${money(price)}</b>`
+                }
+              </div>
+            </div>`;
+        })
+        .join("");
+    }
+
+    function renderPrices() {
+      const rec = currentCapacity();
+      const auto = recommendedCapacity();
+      const grid = document.getElementById("price-grid");
+
+      grid.innerHTML = Object.entries(HOUSE_PRICES)
+        .map(([cap, price]) => {
+          const active = Number(cap) === rec ? "active" : "";
+          return `
+            <button type="button" class="price-card ${active}" data-cap="${cap}">
+              <div class="cap">${cap} pessoas</div>
+              <div class="amount">${money(price)}</div>
+              <div class="per">≈ ${money(Math.round(price / Number(cap)))} / cabeça (igual para todos)</div>
+              ${Number(cap) === rec ? '<div class="tag">Selecionada</div>' : ""}
+            </button>`;
+        })
+        .join("");
+
+      grid.querySelectorAll(".price-card").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedCapacity = Number(btn.dataset.cap);
+          refresh();
+        });
+      });
+
+      const banner = document.getElementById("recommend-banner");
+      banner.innerHTML = `
+        <div>
+          <strong>Sugestão automática: casa para ${auto}</strong>
+          <div style="font-size:0.88rem;color:var(--ink-soft);margin-top:0.2rem">
+            Usando agora: casa ${rec} · ${money(HOUSE_PRICES[rec])}
+          </div>
+        </div>
+        ${
+          selectedCapacity != null
+            ? `<button type="button" class="btn" id="btn-auto">Usar sugestão automática</button>`
+            : ""
+        }`;
+
+      const autoBtn = document.getElementById("btn-auto");
+      if (autoBtn) {
+        autoBtn.addEventListener("click", () => {
+          selectedCapacity = null;
+          refresh();
+        });
+      }
+    }
+
+    function refresh() {
+      renderKpis();
+      renderBandCopy();
+      renderPeople();
+      renderScenarios();
+      renderPrices();
+    }
+
+    refresh();
+  </script>
+</body>
+</html>
